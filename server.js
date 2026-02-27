@@ -21,6 +21,14 @@ app.use(cors());
 app.use(express.json());
 
 
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Pet Care App Backend API is running"
+  });
+});
+
+/* API Routes */
 app.use("/api/pets", petRoutes);
 app.use("/api/vaccinations", vaccinationRoutes);
 app.use("/api/appointments", appointmentRoutes);
