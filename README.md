@@ -296,7 +296,7 @@ http://localhost:5000
 
 ## 🌍 Deployment
 
-Backend is deployed on Render:
+Backend is deployed on **Render**:
 
 🔗 **Deployment Link:**  
 [https://pet-care-app-backend.onrender.com](https://pet-care-app-backend.onrender.com)
