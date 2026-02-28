@@ -1,13 +1,17 @@
 import * as insuranceModel from "../models/insuranceModel.js";
 import * as petModel from "../models/petModel.js";
 
+/* =========================
+   CREATE Insurance Policy
+========================= */
 export const createInsurance = async (req, res) => {
   try {
     const userId = req.user.id;
-    const petId = req.params.petId;
+    const { pet_id } = req.body;
 
+    // Verify pet ownership
     const { data: pet, error: petError } =
-      await petModel.getPetById(petId, userId);
+      await petModel.getPetById(pet_id, userId);
 
     if (petError || !pet) {
       return res.status(403).json({
@@ -16,13 +20,8 @@ export const createInsurance = async (req, res) => {
       });
     }
 
-    const insuranceData = {
-      ...req.body,
-      pet_id: petId
-    };
-
     const { data, error } =
-      await insuranceModel.createInsurance(insuranceData);
+      await insuranceModel.createInsurance(req.body);
 
     if (error) {
       return res.status(400).json({
@@ -44,7 +43,42 @@ export const createInsurance = async (req, res) => {
   }
 };
 
+
+/* =========================
+   GET ALL Insurance (User Level)
+========================= */
 export const getInsurance = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const { data, error } =
+      await insuranceModel.getInsuranceByUser(userId);
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
+
+
+/* =========================
+   GET Insurance By Pet
+========================= */
+export const getInsuranceByPet = async (req, res) => {
   try {
     const userId = req.user.id;
     const petId = req.params.petId;
@@ -82,6 +116,10 @@ export const getInsurance = async (req, res) => {
   }
 };
 
+
+/* =========================
+   UPDATE Insurance
+========================= */
 export const updateInsurance = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -127,6 +165,10 @@ export const updateInsurance = async (req, res) => {
   }
 };
 
+
+/* =========================
+   DELETE Insurance
+========================= */
 export const deleteInsurance = async (req, res) => {
   try {
     const userId = req.user.id;
