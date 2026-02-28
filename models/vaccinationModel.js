@@ -1,5 +1,8 @@
 import { supabase } from "../config/supabaseClient.js";
 
+/* =========================
+   Create Vaccination
+========================= */
 export const createVaccination = async (vaccinationData) => {
   return await supabase
     .from("vaccinations")
@@ -7,6 +10,26 @@ export const createVaccination = async (vaccinationData) => {
     .select();
 };
 
+/* =========================
+   Get ALL Vaccinations (User Level)
+========================= */
+export const getVaccinationsByUser = async (userId) => {
+  return await supabase
+    .from("vaccinations")
+    .select(`
+      *,
+      pets (
+        id,
+        name,
+        user_id
+      )
+    `)
+    .eq("pets.user_id", userId);
+};
+
+/* =========================
+   Get Vaccinations By Pet
+========================= */
 export const getVaccinationsByPet = async (petId) => {
   return await supabase
     .from("vaccinations")
@@ -14,6 +37,9 @@ export const getVaccinationsByPet = async (petId) => {
     .eq("pet_id", petId);
 };
 
+/* =========================
+   Get Vaccination By ID
+========================= */
 export const getVaccinationById = async (id) => {
   return await supabase
     .from("vaccinations")
@@ -27,6 +53,9 @@ export const getVaccinationById = async (id) => {
     .single();
 };
 
+/* =========================
+   Update Vaccination
+========================= */
 export const updateVaccination = async (id, updates) => {
   return await supabase
     .from("vaccinations")
@@ -35,6 +64,9 @@ export const updateVaccination = async (id, updates) => {
     .select();
 };
 
+/* =========================
+   Delete Vaccination
+========================= */
 export const deleteVaccination = async (id) => {
   return await supabase
     .from("vaccinations")
