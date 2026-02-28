@@ -1,14 +1,17 @@
 import * as appointmentModel from "../models/appointmentModel.js";
 import * as petModel from "../models/petModel.js";
 
+/* =========================
+   Create Appointment
+========================= */
 export const createAppointment = async (req, res) => {
   try {
     const userId = req.user.id;
-    const petId = req.params.petId;
+    const { pet_id, appointment_date, notes, status } = req.body;
 
     // Verify pet ownership
     const { data: pet, error: petError } =
-      await petModel.getPetById(petId, userId);
+      await petModel.getPetById(pet_id, userId);
 
     if (petError || !pet) {
       return res.status(403).json({
@@ -17,13 +20,13 @@ export const createAppointment = async (req, res) => {
       });
     }
 
-    const appointmentData = {
-      ...req.body,
-      pet_id: petId
-    };
-
     const { data, error } =
-      await appointmentModel.createAppointment(appointmentData);
+      await appointmentModel.createAppointment({
+        pet_id,
+        appointment_date,
+        notes,
+        status
+      });
 
     if (error) {
       return res.status(400).json({
@@ -45,12 +48,44 @@ export const createAppointment = async (req, res) => {
   }
 };
 
+/* =========================
+   Get ALL Appointments (User Level)
+========================= */
 export const getAppointments = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const { data, error } =
+      await appointmentModel.getAppointmentsByUser(userId);
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
+
+/* =========================
+   Get Appointments By Pet
+========================= */
+export const getAppointmentsByPet = async (req, res) => {
   try {
     const userId = req.user.id;
     const petId = req.params.petId;
 
-    // Verify pet ownership
     const { data: pet, error: petError } =
       await petModel.getPetById(petId, userId);
 
@@ -84,6 +119,9 @@ export const getAppointments = async (req, res) => {
   }
 };
 
+/* =========================
+   Update Appointment
+========================= */
 export const updateAppointment = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -129,6 +167,9 @@ export const updateAppointment = async (req, res) => {
   }
 };
 
+/* =========================
+   Delete Appointment
+========================= */
 export const deleteAppointment = async (req, res) => {
   try {
     const userId = req.user.id;
