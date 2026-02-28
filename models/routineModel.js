@@ -7,6 +7,21 @@ export const createRoutine = async (data) => {
     .select();
 };
 
+export const getRoutinesByUser = async (userId) => {
+  return await supabase
+    .from("routines")
+    .select(`
+      *,
+      pets (
+        id,
+        name,
+        user_id
+      )
+    `)
+    .eq("pets.user_id", userId)
+    .order("scheduled_time", { ascending: true });
+};
+
 export const getRoutinesByPet = async (petId) => {
   return await supabase
     .from("routines")

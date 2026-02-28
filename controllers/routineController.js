@@ -1,13 +1,14 @@
 import * as routineModel from "../models/routineModel.js";
 import * as petModel from "../models/petModel.js";
 
+/* CREATE */
 export const createRoutine = async (req, res) => {
   try {
     const userId = req.user.id;
-    const petId = req.params.petId;
+    const { pet_id } = req.body;
 
     const { data: pet, error: petError } =
-      await petModel.getPetById(petId, userId);
+      await petModel.getPetById(pet_id, userId);
 
     if (petError || !pet) {
       return res.status(403).json({
@@ -16,13 +17,8 @@ export const createRoutine = async (req, res) => {
       });
     }
 
-    const routineData = {
-      ...req.body,
-      pet_id: petId
-    };
-
     const { data, error } =
-      await routineModel.createRoutine(routineData);
+      await routineModel.createRoutine(req.body);
 
     if (error) {
       return res.status(400).json({
@@ -44,7 +40,38 @@ export const createRoutine = async (req, res) => {
   }
 };
 
+
+/* GET ALL (User Level) */
 export const getRoutines = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const { data, error } =
+      await routineModel.getRoutinesByUser(userId);
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
+
+
+/* GET BY PET */
+export const getRoutinesByPet = async (req, res) => {
   try {
     const userId = req.user.id;
     const petId = req.params.petId;
@@ -82,6 +109,8 @@ export const getRoutines = async (req, res) => {
   }
 };
 
+
+/* UPDATE */
 export const updateRoutine = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -127,6 +156,8 @@ export const updateRoutine = async (req, res) => {
   }
 };
 
+
+/* DELETE */
 export const deleteRoutine = async (req, res) => {
   try {
     const userId = req.user.id;
