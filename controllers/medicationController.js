@@ -1,13 +1,17 @@
 import * as medicationModel from "../models/medicationModel.js";
 import * as petModel from "../models/petModel.js";
 
+/* =========================
+   Create Medication
+========================= */
 export const createMedication = async (req, res) => {
   try {
     const userId = req.user.id;
-    const petId = req.params.petId;
+    const { pet_id, medication_name, dosage, due_date, status } = req.body;
 
+    // Verify pet ownership
     const { data: pet, error: petError } =
-      await petModel.getPetById(petId, userId);
+      await petModel.getPetById(pet_id, userId);
 
     if (petError || !pet) {
       return res.status(403).json({
@@ -16,13 +20,14 @@ export const createMedication = async (req, res) => {
       });
     }
 
-    const medicationData = {
-      ...req.body,
-      pet_id: petId
-    };
-
     const { data, error } =
-      await medicationModel.createMedication(medicationData);
+      await medicationModel.createMedication({
+        pet_id,
+        medication_name,
+        dosage,
+        due_date,
+        status
+      });
 
     if (error) {
       return res.status(400).json({
@@ -44,7 +49,40 @@ export const createMedication = async (req, res) => {
   }
 };
 
+/* =========================
+   Get ALL Medications (User Level)
+========================= */
 export const getMedications = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const { data, error } =
+      await medicationModel.getMedicationsByUser(userId);
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
+
+/* =========================
+   Get Medications By Pet
+========================= */
+export const getMedicationsByPet = async (req, res) => {
   try {
     const userId = req.user.id;
     const petId = req.params.petId;
@@ -82,6 +120,9 @@ export const getMedications = async (req, res) => {
   }
 };
 
+/* =========================
+   Update Medication
+========================= */
 export const updateMedication = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -127,6 +168,9 @@ export const updateMedication = async (req, res) => {
   }
 };
 
+/* =========================
+   Delete Medication
+========================= */
 export const deleteMedication = async (req, res) => {
   try {
     const userId = req.user.id;

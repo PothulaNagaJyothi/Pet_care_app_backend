@@ -1,5 +1,8 @@
 import { supabase } from "../config/supabaseClient.js";
 
+/* =========================
+   Create Medication
+========================= */
 export const createMedication = async (data) => {
   return await supabase
     .from("medications")
@@ -7,6 +10,27 @@ export const createMedication = async (data) => {
     .select();
 };
 
+/* =========================
+   Get ALL Medications (User Level)
+========================= */
+export const getMedicationsByUser = async (userId) => {
+  return await supabase
+    .from("medications")
+    .select(`
+      *,
+      pets (
+        id,
+        name,
+        user_id
+      )
+    `)
+    .eq("pets.user_id", userId)
+    .order("due_date", { ascending: true });
+};
+
+/* =========================
+   Get Medications By Pet
+========================= */
 export const getMedicationsByPet = async (petId) => {
   return await supabase
     .from("medications")
@@ -15,6 +39,9 @@ export const getMedicationsByPet = async (petId) => {
     .order("due_date", { ascending: true });
 };
 
+/* =========================
+   Get Medication By ID
+========================= */
 export const getMedicationById = async (id) => {
   return await supabase
     .from("medications")
@@ -28,6 +55,9 @@ export const getMedicationById = async (id) => {
     .single();
 };
 
+/* =========================
+   Update Medication
+========================= */
 export const updateMedication = async (id, updates) => {
   return await supabase
     .from("medications")
@@ -36,6 +66,9 @@ export const updateMedication = async (id, updates) => {
     .select();
 };
 
+/* =========================
+   Delete Medication
+========================= */
 export const deleteMedication = async (id) => {
   return await supabase
     .from("medications")
