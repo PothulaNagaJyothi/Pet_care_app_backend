@@ -1,20 +1,17 @@
 import express from "express";
 import { authenticateUser } from "../middleware/authMiddleware.js";
 import {
-  createVet,
-  getVets,
-  updateVet,
-  deleteVet
+  createEmergencyVet,
+  getEmergencyVets,
+  updateEmergencyVet,
+  deleteEmergencyVet
 } from "../controllers/emergencyVetController.js";
 
 const router = express.Router();
 
-// Public
-router.get("/", getVets);
-
-// Auth required
-router.post("/", authenticateUser, createVet);
-router.put("/:id", authenticateUser, updateVet);
-router.delete("/:id", authenticateUser, deleteVet);
+router.get("/", authenticateUser, getEmergencyVets);
+router.post("/", authenticateUser, createEmergencyVet);
+router.put("/:id", authenticateUser, updateEmergencyVet);
+router.delete("/:id", authenticateUser, deleteEmergencyVet);
 
 export default router;

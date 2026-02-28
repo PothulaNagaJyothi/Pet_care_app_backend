@@ -1,9 +1,12 @@
-import * as vetModel from "../models/emergencyVetModel.js";
+import * as emergencyVetModel from "../models/emergencyVetModel.js";
 
-export const createVet = async (req, res) => {
+/* =========================
+   CREATE Emergency Vet
+========================= */
+export const createEmergencyVet = async (req, res) => {
   try {
     const { data, error } =
-      await vetModel.createVet(req.body);
+      await emergencyVetModel.createEmergencyVet(req.body);
 
     if (error) {
       return res.status(400).json({
@@ -25,44 +28,14 @@ export const createVet = async (req, res) => {
   }
 };
 
-export const getVets = async (req, res) => {
+
+/* =========================
+   GET ALL Emergency Vets
+========================= */
+export const getEmergencyVets = async (req, res) => {
   try {
-    const { city } = req.query;
-
-    let response;
-
-    if (city) {
-      response = await vetModel.getVetByCity(city);
-    } else {
-      response = await vetModel.getAllVets();
-    }
-
-    if (response.error) {
-      return res.status(400).json({
-        success: false,
-        message: response.error.message
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: response.data
-    });
-
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message
-    });
-  }
-};
-
-export const updateVet = async (req, res) => {
-  try {
-    const id = req.params.id;
-
     const { data, error } =
-      await vetModel.updateVet(id, req.body);
+      await emergencyVetModel.getEmergencyVets();
 
     if (error) {
       return res.status(400).json({
@@ -84,12 +57,16 @@ export const updateVet = async (req, res) => {
   }
 };
 
-export const deleteVet = async (req, res) => {
+
+/* =========================
+   UPDATE Emergency Vet
+========================= */
+export const updateEmergencyVet = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const { error } =
-      await vetModel.deleteVet(id);
+    const { data, error } =
+      await emergencyVetModel.updateEmergencyVet(id, req.body);
 
     if (error) {
       return res.status(400).json({
@@ -100,7 +77,38 @@ export const deleteVet = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Vet deleted successfully"
+      data
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
+
+
+/* =========================
+   DELETE Emergency Vet
+========================= */
+export const deleteEmergencyVet = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const { error } =
+      await emergencyVetModel.deleteEmergencyVet(id);
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Emergency vet deleted successfully"
     });
 
   } catch (err) {

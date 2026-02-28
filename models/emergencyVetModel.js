@@ -1,27 +1,20 @@
 import { supabase } from "../config/supabaseClient.js";
 
-export const createVet = async (data) => {
+export const createEmergencyVet = async (data) => {
   return await supabase
     .from("emergency_vets")
     .insert([data])
     .select();
 };
 
-export const getAllVets = async () => {
+export const getEmergencyVets = async () => {
   return await supabase
     .from("emergency_vets")
     .select("*")
     .order("created_at", { ascending: false });
 };
 
-export const getVetByCity = async (city) => {
-  return await supabase
-    .from("emergency_vets")
-    .select("*")
-    .ilike("city", city);
-};
-
-export const updateVet = async (id, updates) => {
+export const updateEmergencyVet = async (id, updates) => {
   return await supabase
     .from("emergency_vets")
     .update(updates)
@@ -29,7 +22,7 @@ export const updateVet = async (id, updates) => {
     .select();
 };
 
-export const deleteVet = async (id) => {
+export const deleteEmergencyVet = async (id) => {
   return await supabase
     .from("emergency_vets")
     .delete()
