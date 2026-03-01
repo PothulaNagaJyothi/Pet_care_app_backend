@@ -15,7 +15,9 @@ export const handleAiChat = async (req, res) => {
         }
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        // use a model name exactly as reported by ListModels
+        // latest available flash model from your account:
+        const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" });
 
         // The system prompt that grounds the AI's identity
         const SYSTEM_PROMPT = `You are a helpful, expert virtual veterinary assistant for a Pet Care App. Limit your response to 5 to 6 lines max. 
