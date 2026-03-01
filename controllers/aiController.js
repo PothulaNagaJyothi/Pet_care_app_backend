@@ -11,6 +11,10 @@ export const handleAiChat = async (req, res) => {
             });
         }
 
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        // Using gemini-1.0-pro which is globally available in all regions and accounts
+        const model = genAI.getGenerativeModel({ model: "gemini-1.0-pro" });
+
         // The system prompt that grounds the AI's identity
         const SYSTEM_PROMPT = `You are a helpful, expert virtual veterinary assistant for a Pet Care App. Limit your response to 5 to 6 lines max. 
 Provide professional, friendly advice regarding dog and cat health, nutrition, and training.
@@ -19,19 +23,15 @@ IMPORTANT RULES:
 2. If the user describes a clear emergency, you MUST tell them to immediately go to an emergency vet clinic.
 3. Keep your answers concise, practical, and easy to read.`;
 
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-        // Pass system prompt directly into the model initialization (new in v0.24)
-        const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash",
-            systemInstruction: SYSTEM_PROMPT
-        });
-
         // Format the raw conversation history securely for Gemini
-        const formattedHistory = [];
+        const formattedHistory = [
+            { role: 'user', parts: [{ text: "System Instructions: " + SYSTEM_PROMPT }] },
+            { role: 'model', parts: [{ text: "Understood. I am ready to act as the virtual veterinary assistant." }] }
+        ];
+
         if (history && Array.isArray(history)) {
             // Skip the first default greeting message which might confuse the history parser
-            const userHistory = history.filter(msg => msg.role !== 'model' || msg.content !== "Hi there! I am your virtual Veterinary Assistant 🐾. Ask me anything about your pet's health, diet, or training!");
+            const userHistory = history.filter(msg => msg.role !== 'model' || !msg.content.includes("virtual Veterinary Assistant"));
 
             userHistory.forEach(msg => {
                 formattedHistory.push({
@@ -50,7 +50,7 @@ IMPORTANT RULES:
             },
         });
 
-        const result = await chat.sendMessage([{ text: message }]);
+        const result = await chat.sendMessage(message);
         const aiResponse = result.response.text();
 
         res.status(200).json({
