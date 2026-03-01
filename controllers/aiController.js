@@ -12,8 +12,7 @@ export const handleAiChat = async (req, res) => {
         }
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        // Using gemini-1.0-pro which is globally available in all regions and accounts
-        const model = genAI.getGenerativeModel({ model: "gemini-1.0-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         // The system prompt that grounds the AI's identity
         const SYSTEM_PROMPT = `You are a helpful, expert virtual veterinary assistant for a Pet Care App. Limit your response to 5 to 6 lines max. 
@@ -23,34 +22,22 @@ IMPORTANT RULES:
 2. If the user describes a clear emergency, you MUST tell them to immediately go to an emergency vet clinic.
 3. Keep your answers concise, practical, and easy to read.`;
 
-        // Format the raw conversation history securely for Gemini
-        const formattedHistory = [
-            { role: 'user', parts: [{ text: "System Instructions: " + SYSTEM_PROMPT }] },
-            { role: 'model', parts: [{ text: "Understood. I am ready to act as the virtual veterinary assistant." }] }
-        ];
+        // Manually concatenate history to bypass startChat schema bugs
+        let fullPrompt = `System Instructions: ${SYSTEM_PROMPT}\n\n`;
 
         if (history && Array.isArray(history)) {
-            // Skip the first default greeting message which might confuse the history parser
+            // Skip the first default greeting message
             const userHistory = history.filter(msg => msg.role !== 'model' || !msg.content.includes("virtual Veterinary Assistant"));
 
             userHistory.forEach(msg => {
-                formattedHistory.push({
-                    role: msg.role === 'user' ? 'user' : 'model',
-                    parts: [{ text: msg.content }]
-                });
+                const prefix = msg.role === 'user' ? 'User:' : 'Assistant:';
+                fullPrompt += `${prefix} ${msg.content}\n`;
             });
         }
 
-        // Initialize the chat session with clean history
-        const chat = model.startChat({
-            history: formattedHistory,
-            generationConfig: {
-                maxOutputTokens: 500,
-                temperature: 0.5,
-            },
-        });
+        fullPrompt += `\nUser: ${message}\nAssistant:`;
 
-        const result = await chat.sendMessage(message);
+        const result = await model.generateContent(fullPrompt);
         const aiResponse = result.response.text();
 
         res.status(200).json({
