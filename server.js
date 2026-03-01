@@ -17,6 +17,7 @@ import nutritionRoutes from "./routes/nutritionRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
 import exportRoutes from "./routes/exportRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ app.use("/api/nutrition", nutritionRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/export", exportRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 const PORT = process.env.PORT || 5000;
 
