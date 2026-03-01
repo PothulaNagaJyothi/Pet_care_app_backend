@@ -15,6 +15,7 @@ import communityRoutes from "./routes/communityRoutes.js";
 import tipRoutes from "./routes/tipRoutes.js";
 import nutritionRoutes from "./routes/nutritionRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
+import exportRoutes from "./routes/exportRoutes.js";
 
 dotenv.config();
 
@@ -52,6 +53,7 @@ app.use("/api/community", communityRoutes);
 app.use("/api/tips", tipRoutes);
 app.use("/api/nutrition", nutritionRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/export", exportRoutes);
 
 const PORT = process.env.PORT || 5000;
 
