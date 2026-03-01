@@ -13,10 +13,12 @@ This backend powers the full-stack Pet Care Application.
 ## 🚀 Tech Stack
 - Node.js
 - Express.js
-- Supabase (PostgreSQL + Authentication)
+- Supabase (PostgreSQL + Authentication + Database Triggers)
 - JWT-based Authentication (Supabase Auth)
 - Render (Deployment Platform)
 - Architecture Pattern: MVC (Model-View-Controller)
+- Generative AI: `@google/generative-ai` (Virtual Vet Assistant)
+- PDF Generation: `pdfkit` (Medical Reports)
 
 ---
 
@@ -156,6 +158,29 @@ All protected routes require:
 | DELETE  | /api/community/:id |
 
 ---
+
+# 🤖AI Virtual Vet Assistant
+| Method | Endpoint | Description |
+|---------|------------------------------------------------|-------------|
+| POST    | /api/ai/chat | Send a message to the Gemini AI Vet Assistant |
+
+---
+
+# 🔔Notifications
+| Method | Endpoint | Description |
+|---------|------------------------------------------------|-------------|
+| GET     | /api/notifications | Fetch all notifications for the user |
+| PUT     | /api/notifications/:id/read | Mark a specific notification as read |
+| PUT     | /api/notifications/read-all | Mark all notifications as read |
+
+---
+
+# 📄Export (Reports)
+| Method | Endpoint | Description |
+|---------|------------------------------------------------|-------------|
+| GET     | /api/export/pdf/:petId | Download a comprehensive PDF medical report |
+
+---
 ## 🗄 Database Schema Overview
 
 ### 🧑Users (Managed by Supabase Auth)
@@ -259,6 +284,16 @@ All protected routes require:
 - id
 - user_id (FK → auth.users.id)
 - content
+- created_at
+
+---
+
+### 🔔Notifications
+- id
+- user_id (FK → auth.users.id)
+- title
+- message
+- is_read
 - created_at
 
 ---
