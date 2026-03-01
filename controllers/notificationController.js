@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabase.js";
+import { supabase } from "../config/supabaseClient.js";
 
 // Fetch all notifications for the user
 export const getUserNotifications = async (req, res) => {
