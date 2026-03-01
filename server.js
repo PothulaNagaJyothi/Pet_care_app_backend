@@ -12,6 +12,9 @@ import insuranceRoutes from "./routes/insuranceRoutes.js";
 import medicationRoutes from "./routes/medicationRoutes.js";
 import emergencyVetRoutes from "./routes/emergencyVetRoutes.js";
 import communityRoutes from "./routes/communityRoutes.js";
+import tipRoutes from "./routes/tipRoutes.js";
+import nutritionRoutes from "./routes/nutritionRoutes.js";
+import settingsRoutes from "./routes/settingsRoutes.js";
 
 dotenv.config();
 
@@ -39,6 +42,9 @@ app.use("/api/insurance", insuranceRoutes);
 app.use("/api/medications", medicationRoutes);
 app.use("/api/emergency-vets", emergencyVetRoutes);
 app.use("/api/community", communityRoutes);
+app.use("/api/tips", tipRoutes);
+app.use("/api/nutrition", nutritionRoutes);
+app.use("/api/settings", settingsRoutes);
 
 const PORT = process.env.PORT || 5000;
 
