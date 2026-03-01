@@ -1,5 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+// simple in-memory cache to reduce repeated API calls
+const aiResponseCache = new Map(); // key: prompt, value: {response, expires}
+
 export const handleAiChat = async (req, res) => {
     try {
         const { message, history } = req.body;
@@ -12,7 +15,7 @@ export const handleAiChat = async (req, res) => {
         }
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         // The system prompt that grounds the AI's identity
         const SYSTEM_PROMPT = `You are a helpful, expert virtual veterinary assistant for a Pet Care App. Limit your response to 5 to 6 lines max. 
@@ -37,8 +40,30 @@ IMPORTANT RULES:
 
         fullPrompt += `\nUser: ${message}\nAssistant:`;
 
+        // check cache first
+        const cacheKey = fullPrompt;
+        const now = Date.now();
+        if (aiResponseCache.has(cacheKey)) {
+            const entry = aiResponseCache.get(cacheKey);
+            if (entry.expires > now) {
+                return res.status(200).json({
+                    success: true,
+                    message: entry.response,
+                    cached: true
+                });
+            } else {
+                aiResponseCache.delete(cacheKey);
+            }
+        }
+
         const result = await model.generateContent(fullPrompt);
         const aiResponse = result.response.text();
+
+        // store in cache for 5 minutes
+        aiResponseCache.set(cacheKey, {
+            response: aiResponse,
+            expires: now + 5 * 60 * 1000
+        });
 
         res.status(200).json({
             success: true,
