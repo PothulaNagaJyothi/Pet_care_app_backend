@@ -20,7 +20,7 @@ export const getWeightLogById = async (id) => {
     .from("weight_logs")
     .select(`
       *,
-      pets (
+      pets!inner (
         user_id
       )
     `)

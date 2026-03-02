@@ -18,7 +18,7 @@ export const getAppointmentsByUser = async (userId) => {
     .from("appointments")
     .select(`
       *,
-      pets (
+      pets!inner (
         id,
         name,
         user_id
@@ -47,7 +47,7 @@ export const getAppointmentById = async (id) => {
     .from("appointments")
     .select(`
       *,
-      pets (
+      pets!inner (
         user_id
       )
     `)

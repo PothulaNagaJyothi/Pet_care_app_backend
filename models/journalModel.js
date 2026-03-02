@@ -18,7 +18,7 @@ export const getJournalByUser = async (userId) => {
     .from("health_journal")
     .select(`
       *,
-      pets (
+      pets!inner (
         id,
         name,
         user_id
@@ -47,7 +47,7 @@ export const getJournalById = async (id) => {
     .from("health_journal")
     .select(`
       *,
-      pets (
+      pets!inner (
         user_id
       )
     `)

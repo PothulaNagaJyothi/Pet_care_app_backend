@@ -18,7 +18,7 @@ export const getInsuranceByUser = async (userId) => {
     .from("insurance")
     .select(`
       *,
-      pets (
+      pets!inner (
         id,
         name,
         user_id
@@ -47,7 +47,7 @@ export const getInsuranceById = async (id) => {
     .from("insurance")
     .select(`
       *,
-      pets (
+      pets!inner (
         user_id
       )
     `)

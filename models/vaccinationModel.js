@@ -18,7 +18,7 @@ export const getVaccinationsByUser = async (userId) => {
     .from("vaccinations")
     .select(`
       *,
-      pets (
+      pets!inner (
         id,
         name,
         user_id
@@ -45,7 +45,7 @@ export const getVaccinationById = async (id) => {
     .from("vaccinations")
     .select(`
       *,
-      pets (
+      pets!inner (
         user_id
       )
     `)
