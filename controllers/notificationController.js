@@ -9,6 +9,7 @@ export const getUserNotifications = async (req, res) => {
             .from("notifications")
             .select("*")
             .eq("user_id", userId)
+            .eq("is_read", false)
             .order("created_at", { ascending: false })
             .limit(20);
 
